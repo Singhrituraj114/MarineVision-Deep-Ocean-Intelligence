@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Build / cache
+.pytest_cache/
+.mypy_cache/
+dist/
+build/
+*.log
+
+# Local notebooks / temp files
+.ipynb_checkpoints/
+
+# Model artifacts are intentionally not tracked on GitHub.
+*.pt
