@@ -152,19 +152,7 @@ Important settings:
 
 - [Deployment Guide](DEPLOYMENT_GUIDE.md)
 - [Project Architecture](docs/PROJECT_ARCHITECTURE.md)
-- [GitHub Publishing Guide](docs/GITHUB_PUBLISHING.md)
-
-## Contributing
-
-1. Create a new branch.
-2. Make your changes.
-3. Test the app locally.
-4. Commit with a clear message.
-5. Open a pull request.
-
-## License
-
-MIT License.
+- [Full Project Deep Dive](docs/PROJECT_DEEP_DIVE.md)
 
 ## Acknowledgements
 
