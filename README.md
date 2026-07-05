@@ -49,6 +49,53 @@ The application combines:
 5. `components/analytics.py` renders the annotated image, charts, tables, debug overlays, and comparison views.
 6. Results can be downloaded or inspected in the interactive dashboard.
 
+## Architecture at a Glance
+
+```mermaid
+flowchart LR
+	U[User Uploads Image / Video / Webcam] --> S[Streamlit UI]
+	S --> C[Control Panel]
+	C --> M[Load YOLOv11l Checkpoint]
+	M --> I[Run Inference]
+	I --> A[Annotated Output]
+	I --> T[Detection Table]
+	I --> H[Confidence Chart]
+	I --> F[Class Frequency Chart]
+	I --> D[Debug Overlay]
+	A --> E[Download / Review]
+```
+
+## Dataset Composition
+
+```mermaid
+pie title Underwater Class Group Distribution
+	"Marine Life" : 6
+	"Flora" : 1
+	"Equipment" : 1
+	"Containers" : 5
+	"Textiles" : 3
+	"Metal" : 3
+	"Organic" : 2
+	"Paper" : 3
+	"String / Rope" : 2
+	"Plastic" : 2
+	"Other" : 2
+	"Legacy Metadata" : 4
+```
+
+## Visual Tour
+
+The repository does not ship with static screenshots, so this section acts as a structured gallery of the key app views.
+
+| Screen | Where to find it | What it shows |
+|---|---|---|
+| Home / Detection Lab | `app.py` | Upload controls, confidence/IoU sliders, batch upload, and live webcam tabs |
+| Annotated Results | `components/analytics.py` | Annotated detections, download button, and debug overlays |
+| Model Information | `pages/01_Model_Information.py` | Architecture summary, training details, and performance metrics |
+| Dataset Overview | `pages/04_Dataset_Overview.py` | Dataset split, class distribution, and quality summary |
+| Workflow Pipeline | `pages/05_Workflow_Pipeline.py` | End-to-end training and deployment flow |
+| Advanced Analytics | `pages/06_Advanced_Analytics.py` | Batch analytics, class frequency, and confidence behavior |
+
 ## System Architecture
 
 | Layer | Responsibility |
