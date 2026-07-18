@@ -12,14 +12,14 @@ def render_project_statistics(stats: Sequence[dict[str, str]]) -> None:
         unsafe_allow_html=True,
     )
 
+    # HTML must stay on one line per card: blank lines / indentation inside
+    # st.markdown are parsed as Markdown code blocks and render as raw text.
     html = "".join(
-        f"""
-        <div class="stat-card">
-          <div class="stat-card__icon">{item['icon']}</div>
-          <div class="stat-card__value">{item['value']}</div>
-          <div class="stat-card__label">{item['label']}</div>
-        </div>
-        """
+        f'<div class="stat-card">'
+        f'<div class="stat-card__icon">{item["icon"]}</div>'
+        f'<div class="stat-card__value">{item["value"]}</div>'
+        f'<div class="stat-card__label">{item["label"]}</div>'
+        f"</div>"
         for item in stats
     )
     st.markdown(f"<div class='stat-grid'>{html}</div>", unsafe_allow_html=True)

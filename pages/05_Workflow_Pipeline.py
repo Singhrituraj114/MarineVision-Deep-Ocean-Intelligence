@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from utils.ui import configure_page, load_css, render_sidebar
+from utils.ui import configure_page, load_css, render_footer, render_page_header, render_sidebar
 
 
 def render_workflow_pipeline() -> None:
@@ -12,17 +12,10 @@ def render_workflow_pipeline() -> None:
     load_css()
     render_sidebar()
 
-    st.markdown(
-        """
-        <div class="hero-shell">
-          <div class="hero-shell__badge">ML Pipeline</div>
-          <h1 class="hero-shell__title">Training & Inference Pipeline</h1>
-          <p class="hero-shell__subtitle">
-            End-to-end machine learning pipeline from raw data to production inference.
-          </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
+    render_page_header(
+        "ML Pipeline",
+        "Training & Inference Pipeline",
+        "End-to-end machine learning pipeline from raw data to production inference.",
     )
 
     st.markdown("<h2 class='section-title'>Complete ML Workflow</h2>", unsafe_allow_html=True)
@@ -216,7 +209,7 @@ def render_workflow_pipeline() -> None:
         ("✨", "Precision", "80.98%", "Positive prediction accuracy"),
         ("🔍", "Recall", "81.12%", "Ground truth detection rate"),
         ("⚡", "Inf. Speed", "~50ms", "Per-image inference time"),
-        ("💾", "Model Size", "~80MB", "PyTorch checkpoint size"),
+        ("💾", "Model Size", "145.7MB", "PyTorch checkpoint size"),
     ]
 
     cols = st.columns(3)
@@ -295,7 +288,7 @@ def render_workflow_pipeline() -> None:
         }
         import pandas as pd
         df_config = pd.DataFrame(config_data)
-        st.dataframe(df_config, use_container_width=True, hide_index=True)
+        st.dataframe(df_config, width="stretch", hide_index=True)
 
     with tab3:
         st.markdown(
@@ -351,6 +344,8 @@ def render_workflow_pipeline() -> None:
         - Underwater robotics
         """
     )
+
+    render_footer()
 
 
 if __name__ == "__main__":

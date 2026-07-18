@@ -14,9 +14,6 @@ def render_detection_controls() -> tuple[float, float]:
     with st.expander("⚙️ Advanced Settings", expanded=False):
         iou = st.slider("IoU threshold", 0.10, 0.90, 0.45, 0.05, help="Intersection over Union for NMS filtering")
 
-    if "iou" not in st.session_state:
-        iou = 0.45
-
     return conf, iou
 
 

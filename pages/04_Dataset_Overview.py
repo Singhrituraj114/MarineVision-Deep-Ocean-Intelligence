@@ -8,7 +8,7 @@ import plotly.express as px
 import pandas as pd
 
 from utils.constants import DATASET_DETAILS, TRAINING_DETAILS
-from utils.ui import configure_page, load_css, render_sidebar
+from utils.ui import configure_page, load_css, render_footer, render_page_header, render_sidebar
 
 
 def render_dataset_overview() -> None:
@@ -16,18 +16,11 @@ def render_dataset_overview() -> None:
     load_css()
     render_sidebar()
 
-    st.markdown(
-        """
-        <div class="hero-shell">
-          <div class="hero-shell__badge">Dataset Information</div>
-          <h1 class="hero-shell__title">Underwater Trash Detection Dataset</h1>
-          <p class="hero-shell__subtitle">
-            17,145 images with 46,515 annotated objects across 34 classes,
-            meticulously curated for marine debris detection in underwater environments.
-          </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
+    render_page_header(
+        "Dataset Information",
+        "Underwater Trash Detection Dataset",
+        "17,145 images with 46,515 annotated objects across 34 classes, "
+        "meticulously curated for marine debris detection in underwater environments.",
     )
 
     col1, col2, col3 = st.columns(3)
@@ -80,18 +73,22 @@ def render_dataset_overview() -> None:
     col1, col2 = st.columns([2, 1])
     with col1:
         fig_split = px.pie(
-            values=df_split["Images"],
-            labels=df_split["Split"],
+            df_split,
+            values="Images",
+            names="Split",
             title="Dataset Distribution",
             color_discrete_sequence=["#00E5FF", "#1DE9B6", "#00B4D8"],
+            hole=0.45,
         )
+        fig_split.update_traces(textinfo="label+percent", textfont=dict(color="#e9f6fc"))
         fig_split.update_layout(
             template="plotly_dark",
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
             height=400,
+            font=dict(color="#dbeafe"),
         )
-        st.plotly_chart(fig_split, use_container_width=True)
+        st.plotly_chart(fig_split, width="stretch")
 
     with col2:
         st.markdown(
@@ -158,7 +155,7 @@ def render_dataset_overview() -> None:
             list(TRAINING_DETAILS.items()),
             columns=["Parameter", "Value"],
         )
-        st.dataframe(training_df, use_container_width=True, hide_index=True)
+        st.dataframe(training_df, width="stretch", hide_index=True)
 
     with tabs[2]:
         st.markdown("### Data Quality Metrics")
@@ -204,7 +201,7 @@ def render_dataset_overview() -> None:
         yaxis_title="Number of Classes",
     )
     fig_classes.update_xaxes(tickangle=-45)
-    st.plotly_chart(fig_classes, use_container_width=True)
+    st.plotly_chart(fig_classes, width="stretch")
 
     st.markdown("<h2 class='section-title'>Use Cases</h2>", unsafe_allow_html=True)
 
@@ -233,6 +230,8 @@ def render_dataset_overview() -> None:
                 """,
                 unsafe_allow_html=True,
             )
+
+    render_footer()
 
 
 if __name__ == "__main__":

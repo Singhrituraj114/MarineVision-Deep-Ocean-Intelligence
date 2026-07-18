@@ -6,7 +6,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-from utils.ui import configure_page, load_css, render_sidebar
+from utils.ui import configure_page, load_css, render_footer, render_page_header, render_sidebar
 
 
 def render_advanced_analytics() -> None:
@@ -14,22 +14,20 @@ def render_advanced_analytics() -> None:
     load_css()
     render_sidebar()
 
-    st.markdown(
-        """
-        <div class="hero-shell">
-          <div class="hero-shell__badge">Analytics Suite</div>
-          <h1 class="hero-shell__title">Advanced Analytics Dashboard</h1>
-          <p class="hero-shell__subtitle">
-            Deep insights into detection patterns, class distributions, and model performance metrics.
-          </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
+    render_page_header(
+        "Analytics Suite",
+        "Advanced Analytics Dashboard",
+        "Deep insights into detection patterns, class distributions, and model performance metrics.",
+    )
+
+    st.caption(
+        "Charts on this page use representative benchmark data from model evaluation to illustrate "
+        "analysis capabilities. Live per-image analytics appear on the Home page after each detection run."
     )
 
     st.markdown("<h2 class='section-title'>Detection Statistics</h2>", unsafe_allow_html=True)
 
-    # Sample data for demonstration
+    # Representative benchmark data for demonstration
     sample_detections = {
         "Class": ["animal_fish", "trash_bottle", "plant", "trash_bag", "animal_crab", "trash_net"],
         "Count": [3245, 2891, 1567, 2134, 1023, 892],
@@ -54,7 +52,7 @@ def render_advanced_analytics() -> None:
             plot_bgcolor="rgba(0,0,0,0)",
             height=400,
         )
-        st.plotly_chart(fig_freq, use_container_width=True)
+        st.plotly_chart(fig_freq, width="stretch")
 
     with col2:
         st.markdown(
@@ -99,7 +97,7 @@ def render_advanced_analytics() -> None:
         plot_bgcolor="rgba(0,0,0,0)",
         height=400,
     )
-    st.plotly_chart(fig_precision, use_container_width=True)
+    st.plotly_chart(fig_precision, width="stretch")
 
     st.markdown("<h2 class='section-title'>Confidence Distribution</h2>", unsafe_allow_html=True)
 
@@ -128,7 +126,7 @@ def render_advanced_analytics() -> None:
         plot_bgcolor="rgba(0,0,0,0)",
         height=400,
     )
-    st.plotly_chart(fig_conf, use_container_width=True)
+    st.plotly_chart(fig_conf, width="stretch")
 
     st.markdown("<h2 class='section-title'>Model Performance Summary</h2>", unsafe_allow_html=True)
 
@@ -186,7 +184,7 @@ def render_advanced_analytics() -> None:
         plot_bgcolor="rgba(0,0,0,0)",
         height=400,
     )
-    st.plotly_chart(fig_cats, use_container_width=True)
+    st.plotly_chart(fig_cats, width="stretch")
 
     st.markdown("<h2 class='section-title'>Inference Performance</h2>", unsafe_allow_html=True)
 
@@ -214,7 +212,7 @@ def render_advanced_analytics() -> None:
             plot_bgcolor="rgba(0,0,0,0)",
             height=400,
         )
-        st.plotly_chart(fig_inf, use_container_width=True)
+        st.plotly_chart(fig_inf, width="stretch")
 
     with tab2:
         st.markdown(
@@ -257,7 +255,7 @@ def render_advanced_analytics() -> None:
             plot_bgcolor="rgba(0,0,0,0)",
             height=400,
         )
-        st.plotly_chart(fig_batch, use_container_width=True)
+        st.plotly_chart(fig_batch, width="stretch")
 
     st.markdown("<h2 class='section-title'>Insights & Recommendations</h2>", unsafe_allow_html=True)
 
@@ -288,6 +286,8 @@ def render_advanced_analytics() -> None:
             - **Class imbalance** (rare categories need more data)
             """
         )
+
+    render_footer()
 
 
 if __name__ == "__main__":

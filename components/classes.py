@@ -16,16 +16,24 @@ def render_supported_classes(classes: Sequence[str], search_term: str = "") -> N
         unsafe_allow_html=True,
     )
 
-    normalized = search_term.strip().lower()
-    
     # Exclude legacy classes by default
     legacy_classes = {"class_0", "class_1", "class_2", "class_3"}
     all_valid_classes = [label for label in classes if label not in legacy_classes]
-    
+
+    # Search + category filter controls
+    col1, col2, col3 = st.columns([2, 1, 1])
+    with col1:
+        search_term = st.text_input(
+            "Search classes",
+            value=search_term,
+            placeholder="🔍 Search classes (e.g. bottle, fish, net)…",
+            label_visibility="collapsed",
+            key="class_explorer_search",
+        )
+
+    normalized = search_term.strip().lower()
     filtered = [label for label in all_valid_classes if normalized in label.lower()] if normalized else list(all_valid_classes)
 
-    # Category filter
-    col1, col2, col3 = st.columns([2, 1, 1])
     with col2:
         selected_category = st.selectbox(
             "Filter by category",
@@ -64,15 +72,16 @@ def render_supported_classes(classes: Sequence[str], search_term: str = "") -> N
         emoji = metadata.get("emoji", "🏷️")
         category = metadata.get("category", "Other")
         
-        html_chips += f"""
-        <div class="class-chip" title="{label}">
-          <div class="class-chip__index">{actual_index:02d}</div>
-          <div style="flex-grow: 1">
-            <div class="class-chip__label">{emoji} {label}</div>
-            <div style="font-size: 0.8rem; color: #9fc7d7; margin-top: 0.2rem">{category}</div>
-          </div>
-        </div>
-        """
+        # Single-line HTML: blank lines / indentation inside st.markdown are
+        # parsed as Markdown code blocks and render as raw text.
+        html_chips += (
+            f'<div class="class-chip" title="{label}">'
+            f'<div class="class-chip__index">{actual_index:02d}</div>'
+            f'<div style="flex-grow: 1">'
+            f'<div class="class-chip__label">{emoji} {label}</div>'
+            f'<div style="font-size: 0.8rem; color: #9fc7d7; margin-top: 0.2rem">{category}</div>'
+            f"</div></div>"
+        )
 
     st.markdown(f"<div class='class-grid'>{html_chips}</div>", unsafe_allow_html=True)
 
@@ -92,14 +101,13 @@ def render_supported_classes(classes: Sequence[str], search_term: str = "") -> N
             emoji = metadata.get("emoji", "⚠️")
             category = metadata.get("category", "Legacy Metadata")
             
-            legacy_html += f"""
-            <div class="class-chip" title="{label}" style="opacity: 0.6">
-              <div class="class-chip__index">{idx:02d}</div>
-              <div style="flex-grow: 1">
-                <div class="class-chip__label">{emoji} {label}</div>
-                <div style="font-size: 0.8rem; color: #9fc7d7; margin-top: 0.2rem">{category}</div>
-              </div>
-            </div>
-            """
+            legacy_html += (
+                f'<div class="class-chip" title="{label}" style="opacity: 0.6">'
+                f'<div class="class-chip__index">{idx:02d}</div>'
+                f'<div style="flex-grow: 1">'
+                f'<div class="class-chip__label">{emoji} {label}</div>'
+                f'<div style="font-size: 0.8rem; color: #9fc7d7; margin-top: 0.2rem">{category}</div>'
+                f"</div></div>"
+            )
         
         st.markdown(f"<div class='class-grid'>{legacy_html}</div>", unsafe_allow_html=True)

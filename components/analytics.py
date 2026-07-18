@@ -20,7 +20,7 @@ def _to_png_bytes(image) -> bytes:
 
 
 def render_detection_results(result: DetectionResult, model: Any | None = None, key_prefix: str | None = None) -> None:
-    st.markdown("<h2 class='section-title'>Advanced Analytics Panel</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='section-title'>Detection Results</h2>", unsafe_allow_html=True)
     st.markdown(
         "<p class='section-subtitle'>Inspect detection density, confidence patterns, and class frequency.</p>",
         unsafe_allow_html=True,
@@ -76,8 +76,7 @@ def render_detection_results(result: DetectionResult, model: Any | None = None, 
         data=_to_png_bytes(result.annotated_image),
         file_name="marinevision_annotated.png",
         mime="image/png",
-        use_container_width=False,
-        key=f"download_annotated_{key_prefix}_{uuid.uuid4().hex[:8]}",
+        key=f"download_annotated_{key_prefix}",
     )
 
     # If no detections were produced, provide actionable guidance to the user.
@@ -86,27 +85,28 @@ def render_detection_results(result: DetectionResult, model: Any | None = None, 
             "No detections were found for this image. Try lowering the confidence threshold in the 'Detection Lab' settings and re-run detection."
         )
 
-    # Debug: allow re-running with a very low confidence to reveal borderline boxes
-    debug = st.checkbox("Show low-confidence boxes (debug)", value=False, key=f"debug_{key_prefix}", help="Re-run detection with a very low confidence to visualize weak predictions.")
-    if debug:
-        if model is None:
-            st.info("Model not available here — ensure the caller passes the loaded model to enable debug re-run.")
-        else:
-            with st.spinner("Running low-confidence pass (debug)…"):
-                low_result = run_detection(model, result.original_image, conf=0.01, iou=0.1, imgsz=640)
-            st.markdown("<div class='panel-heading'>Low-confidence overlay (debug)</div>", unsafe_allow_html=True)
-            lw = getattr(low_result.annotated_image, "width", None) or None
-            st.image(low_result.annotated_image, width=min(lw, 900) if lw else None)
-            if low_result.detections.empty:
-                st.info("No low-confidence detections were found either.")
+    with st.expander("🔬 Sensitivity analysis", expanded=False):
+        st.caption("Re-run detection at a very low confidence threshold to reveal borderline predictions the model considered but filtered out.")
+        debug = st.checkbox("Run low-confidence pass", value=False, key=f"debug_{key_prefix}")
+        if debug:
+            if model is None:
+                st.info("Model not available here — ensure the caller passes the loaded model to enable this analysis.")
             else:
-                st.success(f"Found {low_result.total_detections} detections at low threshold (debug).")
-            # Combine and show overlay: primary are the original (high-conf) boxes,
-            # secondary are the low-confidence boxes we just computed.
-            overlay_img = overlay_detections(result.original_image, result.detections, low_result.detections)
-            ow = getattr(overlay_img, "width", None) or None
-            st.markdown("<div class='panel-heading'>Overlay: high (cyan) + low (amber)</div>", unsafe_allow_html=True)
-            st.image(overlay_img, width=min(ow, 900) if ow else None)
+                with st.spinner("Running low-confidence pass…"):
+                    low_result = run_detection(model, result.original_image, conf=0.01, iou=0.1, imgsz=640)
+                st.markdown("<div class='panel-heading'>Low-confidence detections</div>", unsafe_allow_html=True)
+                lw = getattr(low_result.annotated_image, "width", None) or None
+                st.image(low_result.annotated_image, width=min(lw, 900) if lw else None)
+                if low_result.detections.empty:
+                    st.info("No low-confidence detections were found either.")
+                else:
+                    st.success(f"Found {low_result.total_detections} detections at the low threshold.")
+                # Combine and show overlay: primary are the original (high-conf) boxes,
+                # secondary are the low-confidence boxes we just computed.
+                overlay_img = overlay_detections(result.original_image, result.detections, low_result.detections)
+                ow = getattr(overlay_img, "width", None) or None
+                st.markdown("<div class='panel-heading'>Overlay: confirmed (cyan) + borderline (amber)</div>", unsafe_allow_html=True)
+                st.image(overlay_img, width=min(ow, 900) if ow else None)
 
     tabs = st.tabs(["Detection table", "Confidence chart", "Class frequency"])
     with tabs[0]:
@@ -116,8 +116,8 @@ def render_detection_results(result: DetectionResult, model: Any | None = None, 
             display_df = result.detections.copy()
             display_df["confidence"] = display_df["confidence"].map(lambda value: f"{value:.2%}")
             display_df["area"] = display_df["area"].map(lambda value: f"{value:.1f}")
-            st.dataframe(display_df, use_container_width=True, height=380, hide_index=True, key=f"df_{key_prefix}")
+            st.dataframe(display_df, width="stretch", height=380, hide_index=True, key=f"df_{key_prefix}")
     with tabs[1]:
-        st.plotly_chart(build_confidence_figure(result.detections), use_container_width=True, key=f"confchart_{key_prefix}")
+        st.plotly_chart(build_confidence_figure(result.detections), width="stretch", key=f"confchart_{key_prefix}")
     with tabs[2]:
-        st.plotly_chart(build_class_frequency_figure(result.detections), use_container_width=True, key=f"classchart_{key_prefix}")
+        st.plotly_chart(build_class_frequency_figure(result.detections), width="stretch", key=f"classchart_{key_prefix}")

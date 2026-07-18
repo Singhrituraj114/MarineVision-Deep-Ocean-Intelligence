@@ -159,7 +159,7 @@ CLASS_METADATA = {
 
 # Project highlights
 PROJECT_HIGHLIGHTS = [
-    "Premium glassmorphism UI",
+    "Real-time batch & webcam inference",
     "Transfer-learned YOLOv11l backbone",
     "34 custom underwater classes",
     "85.14% mAP50 production checkpoint",

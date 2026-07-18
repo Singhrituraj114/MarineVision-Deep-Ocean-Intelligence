@@ -54,6 +54,39 @@ def load_css() -> None:
     render_background_fx()
 
 
+def render_page_header(badge: str, title: str, subtitle: str) -> None:
+    """Consistent hero-style header used across all secondary pages."""
+    st.markdown(
+        f"""
+        <section class="hero-shell hero-shell--page">
+          <div class="hero-shell__glow hero-shell__glow--one"></div>
+          <div class="hero-shell__badge">{badge}</div>
+          <h1 class="hero-shell__title">{title}</h1>
+          <p class="hero-shell__subtitle">{subtitle}</p>
+          <div class="hero-shell__wave"></div>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_footer() -> None:
+    st.markdown(
+        """
+        <footer class="mv-footer">
+          <div class="mv-footer__brand">MarineVision</div>
+          <div class="mv-footer__tagline">Intelligent underwater marine debris detection, powered by YOLOv11l.</div>
+          <div class="mv-footer__meta">
+            <span>YOLOv11l &middot; 34 classes &middot; 85.14% mAP50</span>
+            <span class="mv-footer__dot">•</span>
+            <a href="https://github.com/Singhrituraj114" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </footer>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def init_session_state() -> None:
     defaults = {
         "detection_result": None,

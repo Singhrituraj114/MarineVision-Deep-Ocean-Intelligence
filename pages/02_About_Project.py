@@ -3,7 +3,7 @@ from __future__ import annotations
 import streamlit as st
 
 from utils.constants import USE_CASES
-from utils.ui import configure_page, load_css, render_sidebar
+from utils.ui import configure_page, load_css, render_footer, render_page_header, render_sidebar
 
 
 def main() -> None:
@@ -11,10 +11,10 @@ def main() -> None:
     load_css()
     render_sidebar()
 
-    st.markdown("<h1 class='hero-shell__title'>About the Project</h1>", unsafe_allow_html=True)
-    st.markdown(
-        "<p class='hero-shell__subtitle'>Why underwater debris detection matters and how MarineVision applies deep learning to solve it.</p>",
-        unsafe_allow_html=True,
+    render_page_header(
+        "Mission & Impact",
+        "About the Project",
+        "Why underwater debris detection matters and how MarineVision applies deep learning to solve it.",
     )
 
     st.markdown("<h2 class='section-title'>Problem Context</h2>", unsafe_allow_html=True)
@@ -70,6 +70,8 @@ def main() -> None:
         """,
         unsafe_allow_html=True,
     )
+
+    render_footer()
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ import streamlit as st
 
 from components.metrics import render_metrics_dashboard
 from utils.constants import DATASET_DETAILS, FINAL_METRICS, MODEL_PATH, TRAINING_DETAILS
-from utils.ui import configure_page, load_css, render_sidebar
+from utils.ui import configure_page, load_css, render_footer, render_page_header, render_sidebar
 
 
 def _render_info_card(title: str, body: str) -> None:
@@ -24,10 +24,10 @@ def main() -> None:
     load_css()
     render_sidebar()
 
-    st.markdown("<h1 class='hero-shell__title'>Model Information</h1>", unsafe_allow_html=True)
-    st.markdown(
-        "<p class='hero-shell__subtitle'>Architecture, training pipeline, dataset profile, and production metrics for the deployed checkpoint.</p>",
-        unsafe_allow_html=True,
+    render_page_header(
+        "Model Intelligence",
+        "Model Information",
+        "Architecture, training pipeline, dataset profile, and production metrics for the deployed checkpoint.",
     )
 
     render_metrics_dashboard(FINAL_METRICS)
@@ -73,6 +73,8 @@ def main() -> None:
         """,
         unsafe_allow_html=True,
     )
+
+    render_footer()
 
 
 if __name__ == "__main__":

@@ -8,13 +8,15 @@ import tempfile
 import os
 
 from components.analytics import render_detection_results
+from components.classes import render_supported_classes
 from components.detection import render_detection_controls, render_upload_widget
 from components.hero import render_hero
+from components.stats import render_project_statistics
 from components.webcam import render_webcam_tab
-from utils.constants import MODEL_PATH, SUPPORTED_CLASSES
+from utils.constants import MODEL_PATH, PROJECT_STATS, SUPPORTED_CLASSES
 from utils.inference import image_to_bytes, run_detection
 from utils.model_loader import load_detection_model
-from utils.ui import configure_page, init_session_state, load_css, render_sidebar
+from utils.ui import configure_page, init_session_state, load_css, render_footer, render_sidebar
 
 
 def is_video_file(filename: str) -> bool:
@@ -53,6 +55,32 @@ def extract_video_frames(video_file, max_frames: int = 5) -> list[Image.Image]:
     return frames
 
 
+def render_how_it_works() -> None:
+    st.markdown("<h2 class='section-title'>How It Works</h2>", unsafe_allow_html=True)
+    st.markdown(
+        "<p class='section-subtitle'>From raw underwater frame to structured detections in three steps.</p>",
+        unsafe_allow_html=True,
+    )
+    steps = [
+        ("📤", "1 · Upload", "Drop in underwater images or video, or start your webcam for a live feed."),
+        ("🧠", "2 · Detect", "The YOLOv11l checkpoint scans every frame for 34 classes of debris, marine life, plants, and ROV objects."),
+        ("📊", "3 · Analyze", "Review annotated results, confidence charts, and class breakdowns — then export the annotated image."),
+    ]
+    cols = st.columns(3, gap="medium")
+    for column, (icon, title, body) in zip(cols, steps, strict=True):
+        with column:
+            st.markdown(
+                f"""
+                <div class="metric-card">
+                  <div class="metric-card__icon">{icon}</div>
+                  <div class="metric-card__value" style="font-size:1.15rem">{title}</div>
+                  <div class="metric-card__subtitle">{body}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+
 def main() -> None:
     configure_page("MarineVision | Intelligent Underwater Marine Debris Detection")
     load_css()
@@ -61,6 +89,9 @@ def main() -> None:
 
     st.markdown("<div class='hero-shell-spacer'></div>", unsafe_allow_html=True)
     render_hero()
+
+    render_project_statistics(PROJECT_STATS)
+    render_how_it_works()
 
     conf, iou = render_detection_controls()
 
@@ -112,19 +143,15 @@ def main() -> None:
                                 result = run_detection(model, image, conf=conf, iou=iou)
                                 st.markdown(
                                     """
-                                    <div class="sidebar-card">
-                                      <div class="sidebar-card__label">Model checkpoint</div>
-                                      <div class="sidebar-card__value">MarineVision_YOLOv11l_best.pt</div>
+                                    <div class="metric-card metric-card--compact">
+                                      <div class="metric-card__label">Model checkpoint</div>
+                                      <div class="metric-card__subtitle">MarineVision_YOLOv11l_best.pt</div>
                                     </div>
-                                    <div class="sidebar-card">
-                                      <div class="sidebar-card__label">Input size</div>
-                                      <div class="sidebar-card__value">640 x 640</div>
+                                    <div class="metric-card metric-card--compact" style="margin-top:0.6rem">
+                                      <div class="metric-card__label">Inference settings</div>
+                                      <div class="metric-card__subtitle">640 x 640 input · confidence {:.2f} · IoU {:.2f}</div>
                                     </div>
-                                    <div class="sidebar-card">
-                                      <div class="sidebar-card__label">Confidence</div>
-                                      <div class="sidebar-card__value">{:.2f}</div>
-                                    </div>
-                                    """.format(conf),
+                                    """.format(conf, iou),
                                     unsafe_allow_html=True,
                                 )
 
@@ -134,10 +161,25 @@ def main() -> None:
                     except Exception as e:
                         st.error(f"Error processing {uploaded_file.name}: {str(e)}")
         else:
-            st.info("📤 Upload images or videos to get started. Multiple files processed with live detection.")
+            st.markdown(
+                """
+                <div class="empty-state">
+                  <div class="empty-state__icon">🌊</div>
+                  <div class="empty-state__title">Drop underwater imagery to begin</div>
+                  <div class="empty-state__subtitle">
+                    Upload one or more images or videos above — detection starts automatically
+                    and results appear here with full analytics.
+                  </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
     with live_tab:
         render_webcam_tab(conf, iou)
+
+    render_supported_classes(SUPPORTED_CLASSES)
+    render_footer()
 
 
 if __name__ == "__main__":

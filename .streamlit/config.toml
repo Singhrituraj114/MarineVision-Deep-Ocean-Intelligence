@@ -7,7 +7,7 @@ textColor = "#e6f7ff"
 font = "sans serif"
 
 [client]
-showSidebarNavigation = true
+showSidebarNavigation = false
 
 [browser]
 gatherUsageStats = false
